@@ -1,26 +1,24 @@
-int motor_pin1 {2}; //This pin 
-int motor_pin2 {4};
+const int MOTOR_PIN1 {3};
+const int MOTOR_PIN2 {5};
 	
 void setup() {
-  pinMode(motor_pin1, OUTPUT);
-  pinMode(motor_pin2, OUTPUT);
+  pinMode(MOTOR_PIN1, OUTPUT);
+  pinMode(MOTOR_PIN2, OUTPUT);
 	Serial.begin(9600);
 }
-	
-
 
 void vooruit(int runtime = 1000, int speed = 10){
-	digitalWrite(motor_pin2, HIGH);
-  analogWrite(motor_pin1, speed);
+	digitalWrite(MOTOR_PIN2, HIGH);
+  analogWrite(MOTOR_PIN1, speed);
   delay(runtime);
-	digitalWrite(motor_pin2, LOW);
+	digitalWrite(MOTOR_PIN2, LOW);
 }
 
 void achteruit(int runtime = 1000, int speed = 10){
-	digitalWrite(motor_pin1, HIGH);
-  analogWrite(motor_pin2, speed);
+	digitalWrite(MOTOR_PIN1, HIGH);
+  analogWrite(MOTOR_PIN2, speed);
   delay(runtime);
-	digitalWrite(motor_pin1, LOW);
+	digitalWrite(MOTOR_PIN1, LOW);
 }
 
 void loop() {
