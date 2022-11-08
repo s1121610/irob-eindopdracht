@@ -4,7 +4,12 @@
 
 const int MOTOR_PIN1 = 5;
 const int MOTOR_PIN2 = 3;
-const int sampleTime {1};
+#define sampleTime  0.005
+
+int16_t accY, accZ, gyroX;
+volatile int motorPower, gyroRate;
+volatile float accAngle, gyroAngle, currentAngle, prevAngle=0, error, prevError=0, errorSum=0;
+volatile byte count=0;
 
 MPU6050 accelgyro;
 
@@ -27,6 +32,7 @@ void setup(){
 
   Wire.begin();
   accelgyro.initialize();
+
   Serial.println("Testing device connections...");
   Serial.println(accelgyro.testConnection() ? "MPU6050 connection successful" : "MPU6050 connection failed");
 }
@@ -45,6 +51,7 @@ void loop(){
   float KP = 10;
   float KI = 30;
   float KD = 0.1;
+  #define targetAngle 0
 
   float state = ay;
   float desired_state = 16450;
@@ -61,15 +68,32 @@ void loop(){
 
   float pid = P + I - D;
 
+
+  // #####################################################3
+  // calculate the angle of inclination
+    accAngle = atan2(ay, az)*RAD_TO_DEG;
+    gyroRate = map(gx, -32768, 32767, -250, 250);
+    gyroAngle = (float)gyroRate*sampleTime;  
+    currentAngle = 0.9934*(prevAngle + gyroAngle) + 0.0066*(accAngle);
+    
+    error = currentAngle - targetAngle;
+    errorSum = errorSum + error;  
+    errorSum = constrain(errorSum, -300, 300);
+    //calculate output from P, I and D values
+    pid = KP*(error) + KI*(errorSum)*sampleTime - KD*(currentAngle-prevAngle)/sampleTime;
+    prevAngle = currentAngle;
+  // #####################################################3
+  
+
   //Serial.println(pid);
 
   
-  int mapping = constrain(pid, 0, 255);
-  Serial.print("PID = "); Serial.println(pid);
+  int mapping = constrain(pid, -255, 255);
+  Serial.print("PID = "); Serial.println(mapping);
 
-  if (az < 0) {
+  if (mapping < -10) {
     backwards(0, mapping);
-  } else if (az > 0) {
+  } else if (mapping > 10) {
     //long mappingf = map(pid, stable_point, 6000, 0, 130);
     // Serial.print("Map forwards = "); Serial.println(mappingf);
     forwards(0, mapping);
@@ -99,4 +123,4 @@ void backwards(int runtime = 0, int speed = 10){
 
 ISR(TIMER_COPA_vect) {
 
-}
+}
