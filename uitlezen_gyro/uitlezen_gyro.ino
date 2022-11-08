@@ -61,11 +61,11 @@ void loop(){
 
   float pid = P + I - D;
 
-  Serial.println(pid);
+  //Serial.println(pid);
 
   
   int mapping = constrain(pid, 0, 255);
-  //Serial.print("Map = "); Serial.println(mapping);
+  Serial.print("PID = "); Serial.println(pid);
 
   if (az < 0) {
     backwards(0, mapping);
@@ -98,5 +98,5 @@ void backwards(int runtime = 0, int speed = 10){
 }
 
 ISR(TIMER_COPA_vect) {
-  
+
 }
