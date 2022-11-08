@@ -2,8 +2,9 @@
 #include "I2Cdev.h"
 #include "MPU6050.h"
 
-const int MOTOR_PIN1 = 3;
-const int MOTOR_PIN2 = 5;
+const int MOTOR_PIN1 = 5;
+const int MOTOR_PIN2 = 3;
+const int sampleTime {1};
 
 MPU6050 accelgyro;
 
@@ -18,7 +19,7 @@ void backwards(int runtime, int speed);
 void forwards(int runtime, int speed);
 
 void setup(){
-  Serial.begin(9600);
+  Serial.begin(38400);
   Serial.println("Initializing...");
 
   pinMode(MOTOR_PIN1, OUTPUT);
@@ -33,20 +34,20 @@ void setup(){
 void loop(){
   accelgyro.getMotion6(&ax, &ay, &az, &gx, &gy, &gz);
 
-  Serial.print("a/g:\t");
-  Serial.print(ax); Serial.print("\t");
-  Serial.print(ay); Serial.print("\t");
-  Serial.print(az); Serial.print("\t");
-  Serial.print(gx); Serial.print("\t");
-  Serial.print(gy); Serial.print("\t");
-  Serial.println(gz);
+  //Serial.print("a/g:\t");
+  // Serial.print(ax); Serial.print("\t");
+  // Serial.print(ay); Serial.print("\t");
+  //Serial.print(az); Serial.print("\t");
+  // Serial.print("X"); Serial.print(gx); Serial.print("\t");
+  // Serial.print("Y"); Serial.print(gy); Serial.print("\t");
+  // Serial.print("Z"); Serial.println(gz);
 
-  float KP = 1;
-  float KI = 0;
-  float KD = 2;
+  float KP = 10;
+  float KI = 30;
+  float KD = 0.1;
 
-  float state = gx;
-  float desired_state = 0;
+  float state = ay;
+  float desired_state = 16450;
 
   float error = state - desired_state;
 
@@ -55,33 +56,47 @@ void loop(){
   prev_error = error;
 
   float P = KP * error;
-  float I = KI * integral;
-  float D = KD * derivative;
+  float I = KI * integral * sampleTime;
+  float D = KD * derivative / sampleTime;
 
-  float pid = P + I + D;
+  float pid = P + I - D;
 
   Serial.println(pid);
 
-  if (pid < 0) {
-    forwards(10, map(pid, 0, 3000, 130, 0));
-  } else if (pid > 0) {
-    backwards(10, map(pid, -3000, 0, 130, 0));
+  
+  int mapping = constrain(pid, 0, 255);
+  //Serial.print("Map = "); Serial.println(mapping);
+
+  if (az < 0) {
+    backwards(0, mapping);
+  } else if (az > 0) {
+    //long mappingf = map(pid, stable_point, 6000, 0, 130);
+    // Serial.print("Map forwards = "); Serial.println(mappingf);
+    forwards(0, mapping);
+
+  } else{
+    // OFF nnnnbvkhvhjvhj
+
   }
 
-  
-  delay(111);
 }
 
-void forwards(int runtime = 1000, int speed = 10){
+void forwards(int runtime = 0, int speed = 10){
+  digitalWrite(MOTOR_PIN1, LOW);
 	digitalWrite(MOTOR_PIN2, HIGH);
   analogWrite(MOTOR_PIN1, speed);
   delay(runtime);
-	digitalWrite(MOTOR_PIN2, LOW);
+	// digitalWrite(MOTOR_PIN2, LOW);
 }
 
-void backwards(int runtime = 1000, int speed = 10){
+void backwards(int runtime = 0, int speed = 10){
+  digitalWrite(MOTOR_PIN2, LOW);
 	digitalWrite(MOTOR_PIN1, HIGH);
   analogWrite(MOTOR_PIN2, speed);
   delay(runtime);
-	digitalWrite(MOTOR_PIN1, LOW);
+	// digitalWrite(MOTOR_PIN1, LOW);
 }
+
+ISR(TIMER_COPA_vect) {
+  
+}

@@ -1,5 +1,5 @@
-const int MOTOR_PIN1 {3};
-const int MOTOR_PIN2 {5};
+const int MOTOR_PIN1 {5};
+const int MOTOR_PIN2 {3};
 	
 void setup() {
   pinMode(MOTOR_PIN1, OUTPUT);
@@ -9,14 +9,14 @@ void setup() {
 
 void vooruit(int runtime = 1000, int speed = 10){
 	digitalWrite(MOTOR_PIN2, HIGH);
-  analogWrite(MOTOR_PIN1, speed);
+  analogWrite(MOTOR_PIN1, -50);
   delay(runtime);
 	digitalWrite(MOTOR_PIN2, LOW);
 }
 
 void achteruit(int runtime = 1000, int speed = 10){
 	digitalWrite(MOTOR_PIN1, HIGH);
-  analogWrite(MOTOR_PIN2, speed);
+  analogWrite(MOTOR_PIN2, -50);
   delay(runtime);
 	digitalWrite(MOTOR_PIN1, LOW);
 }
