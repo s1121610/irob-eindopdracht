@@ -7,24 +7,28 @@ void setup() {
 	Serial.begin(9600);
 }
 
+// Turn the wheels forwards for 1 second (by default)
 void vooruit(int runtime = 1000, int speed = 10){
 	digitalWrite(MOTOR_PIN2, HIGH);
-  analogWrite(MOTOR_PIN1, -50);
+  analogWrite(MOTOR_PIN1, speed);
   delay(runtime);
 	digitalWrite(MOTOR_PIN2, LOW);
+  analogWrite(MOTOR_PIN1, 0);
 }
 
+// Turn the wheels backwards for 1 second (by default)
 void achteruit(int runtime = 1000, int speed = 10){
 	digitalWrite(MOTOR_PIN1, HIGH);
-  analogWrite(MOTOR_PIN2, -50);
+  analogWrite(MOTOR_PIN2, speed);
   delay(runtime);
 	digitalWrite(MOTOR_PIN1, LOW);
+  analogWrite(MOTOR_PIN2, 0);
 }
 
 void loop() {
-  for(int i {0}; i < 130; i+=1){
+  // Every second, turn te motor 10 faster (slowest speed = 130, highest = 0)
+  for(int i {0}; i < 130; i+=10){
     vooruit(1000, i);
     achteruit(1000, i);
-	  //analogWrite(motor_pin1, i);
 	}
 }

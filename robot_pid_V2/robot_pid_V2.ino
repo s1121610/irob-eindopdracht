@@ -3,20 +3,20 @@
 #include "MPU6050.h"
 #include "math.h"
 
-#define leftMotorPWMPin   5
-#define leftMotorDirPin   3
-#define rightMotorPWMPin  6
-#define rightMotorDirPin  7
+#define leftMotorPWMPin   6
+#define leftMotorDirPin   7
+#define rightMotorPWMPin  5
+#define rightMotorDirPin  4
 
 #define TRIGGER_PIN 9
 #define ECHO_PIN 8
 //#define MAX_DISTANCE 75
 
-#define Kp  850
-#define Ki  140
+#define Kp  175
+#define Ki  15
 #define Kd  0.005
 #define sampleTime  0.005
-#define targetAngle -2
+#define targetAngle -6
 
 MPU6050 mpu;
 //NewPing sonar(TRIGGER_PIN, ECHO_PIN, MAX_DISTANCE);
@@ -74,9 +74,9 @@ void setup() {
   pinMode(13, OUTPUT);
   // initialize the MPU6050 and set offset values
   mpu.initialize();
-  mpu.setYAccelOffset(1593);
-  mpu.setZAccelOffset(963);
-  mpu.setXGyroOffset(40);
+  mpu.setYAccelOffset(-591);
+  mpu.setZAccelOffset(781);
+  mpu.setXGyroOffset(106);
   // initialize PID sampling loop
   init_PID();
 
@@ -92,9 +92,9 @@ void loop() {
   //gyroX -= 40;
 
 
-  Serial.print("accY = ");Serial.print(accY);
-  Serial.print(" accZ = ");Serial.print(accZ);
-  Serial.print(" gyroX = ");Serial.println(gyroX);
+  //Serial.print("accY = ");Serial.print(accY);
+  //Serial.print(" accZ = ");Serial.print(accZ);
+  //Serial.print(" gyroX = ");Serial.println(gyroX);
 
   // set motor power after constraining it
   motorPower = constrain(motorPower, -255, 255);
@@ -106,6 +106,8 @@ void loop() {
   // if((distanceCm < 20) && (distanceCm != 0)) {
   //   setMotors(-motorPower, motorPower);
   // }
+  Serial.print(" currentAngle = ");Serial.println(currentAngle);
+
 }
 // The ISR will be called every 5 milliseconds
 ISR(TIMER1_COMPA_vect)
@@ -115,7 +117,6 @@ ISR(TIMER1_COMPA_vect)
   gyroRate = map(gyroX, -32768, 32767, -250, 250);
   gyroAngle = (float)gyroRate*sampleTime;  
   currentAngle = 0.9934*(prevAngle + gyroAngle) + 0.0066*(accAngle);
-  
   error = currentAngle - targetAngle;
   errorSum = errorSum + error;  
   errorSum = constrain(errorSum, -300, 300);
@@ -130,4 +131,3 @@ ISR(TIMER1_COMPA_vect)
     digitalWrite(13, !digitalRead(13));
   }
 }
-
