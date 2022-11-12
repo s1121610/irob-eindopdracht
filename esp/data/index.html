@@ -1,0 +1,54 @@
+<!DOCTYPE html>
+<html lang="en">
+    <head>
+        <meta charset="UTF-8" />
+        <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+        <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+        <title>Super cool controller</title>
+    </head>
+    <body>
+        <div class="container">
+            <button id="forwards-button">FORWARDS</button>
+            <button id="backwards-button">BACKWARDS</button>
+        </div>
+    </body>
+</html>
+
+<script>
+    const forwardsButton = document.getElementById("forwards-button");
+    const backwardsButton = document.getElementById("backwards-button");
+
+    forwardsButton.addEventListener("click", async () => {
+        await fetch("forwards", {
+            method: "POST",
+        });
+    });
+
+    backwardsButton.addEventListener("click", async () => {
+        await fetch("backwards", {
+            method: "POST",
+        });
+    });
+</script>
+
+<style>
+    body {
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        height: 100vh;
+        box-sizing: border-box;
+        overflow-y: hidden;
+    }
+
+    .container {
+        display: flex;
+        flex-direction: column;
+        gap: 50px;
+    }
+
+    button {
+        width: 200px;
+        height: 200px;
+    }
+</style>
