@@ -7,8 +7,10 @@
         <title>Super cool controller</title>
     </head>
     <body>
-        <button id="forwards-button">FORWARDS</button>
-        <button id="backwards-button">BACKWARDS</button>
+        <div class="container">
+            <button id="forwards-button">FORWARDS</button>
+            <button id="backwards-button">BACKWARDS</button>
+        </div>
     </body>
 </html>
 
@@ -17,9 +19,36 @@
     const backwardsButton = document.getElementById("backwards-button");
 
     forwardsButton.addEventListener("click", async () => {
-        console.log("F");
         await fetch("forwards", {
             method: "POST",
         });
     });
+
+    backwardsButton.addEventListener("click", async () => {
+        await fetch("backwards", {
+            method: "POST",
+        });
+    });
 </script>
+
+<style>
+    body {
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        height: 100vh;
+        box-sizing: border-box;
+        overflow-y: hidden;
+    }
+
+    .container {
+        display: flex;
+        flex-direction: column;
+        gap: 50px;
+    }
+
+    button {
+        width: 200px;
+        height: 200px;
+    }
+</style>
