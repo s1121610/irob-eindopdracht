@@ -55,10 +55,9 @@ void handle_root() {
 }
 
 void handle_forwards() {
-  Serial.println("F");
+  // Seriele communicatie met Arduino
 }
 
 void handle_backwards() {
-  Serial.println("B");
-
+  // Seriele communicatie met Arduino
 }
